@@ -10,8 +10,10 @@ import { connectDB, disconnectDB } from './config/database';
 import { connectRedis, disconnectRedis } from './config/redis';
 
 import { logger } from './utils/logger';
-
 import { errorHandler } from './middleware/errorHandler';
+
+// Routes
+import adminRoutes from './routes/admin';
 
 
 dotenv.config();
@@ -35,6 +37,7 @@ app.use(limiter);
 
 // Error handling middleware
 app.use(errorHandler);
+
 // CORS configuration
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
@@ -44,6 +47,23 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    services: {
+      database: 'connected',
+      redis: 'connected'
+    }
+  });
+});
+
+// API routes
+
+app.use('/api/admin', adminRoutes);
 
 // Start server
 const startServer = async () => {
