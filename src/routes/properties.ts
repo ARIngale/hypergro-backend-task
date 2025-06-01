@@ -3,12 +3,11 @@ import { Property } from '../models/Property';
 import { AuthRequest } from '../middleware/auth';
 import { Favorite } from '../models/Favorite';
 import { CacheService } from '../services/cacheService';
-import { RequestHandler } from 'express';
 
 const router = express.Router();
 
 // GET all properties
-router.get('/', (async (req: AuthRequest, res) => {
+router.get('/', async (req: AuthRequest, res) => {
   try {
     const properties = await Property.find();
     if (!properties) {
@@ -35,10 +34,10 @@ router.get('/', (async (req: AuthRequest, res) => {
     console.error(error);
     res.status(500).send({ message: 'Error fetching properties' });
   }
-}) as RequestHandler);
+});
 
 // GET property by ID
-router.get('/:id', (async (req: AuthRequest, res) => {
+router.get('/:id', async (req: AuthRequest, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
@@ -73,7 +72,7 @@ router.get('/:id', (async (req: AuthRequest, res) => {
     console.error(error);
     res.status(500).send({ message: 'Error fetching property' });
   }
-})as RequestHandler);
+});
 
 // POST a new property
 router.post('/', async (req, res) => {
@@ -88,7 +87,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT (update) an existing property
-router.put('/:id', (async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const property = await Property.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!property) {
@@ -99,10 +98,10 @@ router.put('/:id', (async (req, res) => {
     console.error(error);
     res.status(400).send({ message: 'Error updating property' });
   }
-}) as RequestHandler);
+});
 
 // DELETE a property
-router.delete('/:id', (async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const property = await Property.findByIdAndDelete(req.params.id);
     if (!property) {
@@ -113,6 +112,6 @@ router.delete('/:id', (async (req, res) => {
     console.error(error);
     res.status(500).send({ message: 'Error deleting property' });
   }
-}) as RequestHandler);
+});
 
 export default router;

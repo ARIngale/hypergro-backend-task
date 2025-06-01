@@ -7,12 +7,11 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
 import { recommendationSchema } from '../utils/validation';
 import { CacheService } from '../services/cacheService';
-import { RequestHandler } from 'express';
 
 const router = express.Router();
 
 // GET received recommendations
-router.get('/received', authenticate, (async (req: AuthRequest, res, next) => {
+router.get('/received', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const {
       page = 1,
@@ -87,10 +86,10 @@ router.get('/received', authenticate, (async (req: AuthRequest, res, next) => {
   } catch (error) {
     next(error);
   }
-}) as RequestHandler );
+});
 
 // GET sent recommendations
-router.get('/sent', authenticate, (async (req: AuthRequest, res, next) => {
+router.get('/sent', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const {
       page = 1,
@@ -159,10 +158,10 @@ router.get('/sent', authenticate, (async (req: AuthRequest, res, next) => {
   } catch (error) {
     next(error);
   }
-}) as RequestHandler);
+});
 
 // GET recommendation statistics
-router.get('/stats', authenticate, (async (req: AuthRequest, res, next) => {
+router.get('/stats', authenticate, async (req: AuthRequest, res, next) => {
   try {
     // Try cache first
     const cachedStats = await CacheService.getRecommendationStats(req.user!._id.toString());
@@ -192,7 +191,7 @@ router.get('/stats', authenticate, (async (req: AuthRequest, res, next) => {
   } catch (error) {
     next(error);
   }
-})as RequestHandler);
+});
 
 // CREATE recommendation
 router.post('/', authenticate, async (req: AuthRequest, res, next) => {

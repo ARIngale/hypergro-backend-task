@@ -3,12 +3,11 @@ import { User } from '../models/User';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
 import { CacheService } from '../services/cacheService';
-import { RequestHandler } from 'express';
 
 const router = express.Router();
 
 // Search users by email (for recommendations)
-router.get('/search', authenticate, (async (req: AuthRequest, res, next) => {
+router.get('/search', authenticate, async (req: AuthRequest, res, next) => {
   try {
     const { email } = req.query;
 
@@ -46,7 +45,7 @@ router.get('/search', authenticate, (async (req: AuthRequest, res, next) => {
   } catch (error) {
     next(error);
   }
-}) as RequestHandler);
+});
 
 // Get user by email (exact match for recommendations)
 router.get('/by-email/:email', authenticate, async (req: AuthRequest, res, next) => {

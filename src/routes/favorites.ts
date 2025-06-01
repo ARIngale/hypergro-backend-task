@@ -5,77 +5,74 @@ import { Property } from '../models/Property';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
 import { CacheService } from '../services/cacheService';
-import { RequestHandler } from 'express';
 
 const router = express.Router();
 
 // Get user's favorites
+router.get('/', authenticate, async (req: AuthRequest, res, next) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+    } = req.query;
 
-router.get(
-  '/',
-  authenticate,
-  (async (req: AuthRequest, res, next) => {
-    try {
-      const {
-        page = 1,
-        limit = 10,
-        sortBy = 'createdAt',
-        sortOrder = 'desc',
-      } = req.query;
+    const pageNum = Math.max(1, Number(page));
+    const limitNum = Math.min(50, Math.max(1, Number(limit)));
 
-      const pageNum = Math.max(1, Number(page));
-      const limitNum = Math.min(50, Math.max(1, Number(limit)));
-
-      const cachedResult = await CacheService.getFavorites(req.user!._id.toString(), pageNum);
-      if (cachedResult) {
-        return res.json(cachedResult);
-      }
-
-      const skip = (pageNum - 1) * limitNum;
-      const sort: any = {};
-      sort[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
-
-      const [favorites, total] = await Promise.all([
-        Favorite.find({ userId: req.user!._id })
-          .populate({
-            path: 'propertyId',
-            populate: {
-              path: 'createdBy',
-              select: 'firstName lastName email',
-            },
-          })
-          .sort(sort)
-          .skip(skip)
-          .limit(limitNum)
-          .lean(),
-        Favorite.countDocuments({ userId: req.user!._id }),
-      ]);
-
-      const validFavorites = favorites.filter(fav => fav.propertyId);
-
-      const result = {
-        success: true,
-        data: {
-          favorites: validFavorites,
-          pagination: {
-            currentPage: pageNum,
-            totalPages: Math.ceil(total / limitNum),
-            totalItems: total,
-            itemsPerPage: limitNum,
-            hasNextPage: pageNum < Math.ceil(total / limitNum),
-            hasPrevPage: pageNum > 1,
-          },
-        },
-      };
-
-      await CacheService.setFavorites(req.user!._id.toString(), pageNum, result);
-      res.json(result);
-    } catch (error) {
-      next(error);
+    // Try cache first
+    const cachedResult = await CacheService.getFavorites(req.user!._id.toString(), pageNum);
+    if (cachedResult) {
+      return res.json(cachedResult);
     }
-  }) as RequestHandler
-);
 
+    const skip = (pageNum - 1) * limitNum;
+    const sort: any = {};
+    sort[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
+
+    const [favorites, total] = await Promise.all([
+      Favorite.find({ userId: req.user!._id })
+        .populate({
+          path: 'propertyId',
+          populate: {
+            path: 'createdBy',
+            select: 'firstName lastName email',
+          },
+        })
+        .sort(sort)
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      Favorite.countDocuments({ userId: req.user!._id }),
+    ]);
+
+    // Filter out favorites where property might have been deleted
+    const validFavorites = favorites.filter(fav => fav.propertyId);
+
+    const result = {
+      success: true,
+      data: {
+        favorites: validFavorites,
+        pagination: {
+          currentPage: pageNum,
+          totalPages: Math.ceil(total / limitNum),
+          totalItems: total,
+          itemsPerPage: limitNum,
+          hasNextPage: pageNum < Math.ceil(total / limitNum),
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    };
+
+    // Cache the result
+    await CacheService.setFavorites(req.user!._id.toString(), pageNum, result);
+
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Add property to favorites
 router.post('/:propertyId', authenticate, async (req: AuthRequest, res, next) => {
