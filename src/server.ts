@@ -16,6 +16,8 @@ import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth';
 import adminRoutes from './routes/admin';
 import favoriteRoutes from './routes/favorites';
+import propertyRoutes from './routes/properties';
+
 
 
 dotenv.config();
@@ -62,8 +64,9 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 // Error handling middleware
