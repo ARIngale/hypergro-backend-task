@@ -15,6 +15,7 @@ import { errorHandler } from './middleware/errorHandler';
 // Routes
 import authRoutes from './routes/auth';
 import adminRoutes from './routes/admin';
+import favoriteRoutes from './routes/favorites';
 
 
 dotenv.config();
@@ -35,9 +36,6 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 app.use(limiter);
-
-// Error handling middleware
-app.use(errorHandler);
 
 // CORS configuration
 app.use(cors({
@@ -65,6 +63,12 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/favorites', favoriteRoutes);
+
+
+// Error handling middleware
+app.use(errorHandler);
+
 
 // Start server
 const startServer = async () => {
