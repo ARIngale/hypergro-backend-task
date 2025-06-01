@@ -17,6 +17,7 @@ import authRoutes from './routes/auth';
 import adminRoutes from './routes/admin';
 import favoriteRoutes from './routes/favorites';
 import propertyRoutes from './routes/properties';
+import recommendationRoutes from './routes/recommendations';
 
 
 
@@ -67,6 +68,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 
 // Error handling middleware
