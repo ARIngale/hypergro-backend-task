@@ -1,14 +1,23 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { logger } from './utils/logger';
+
 import { connectDB, disconnectDB } from './config/database';
 import { connectRedis, disconnectRedis } from './config/redis';
+
+import { logger } from './utils/logger';
+
+import { errorHandler } from './middleware/errorHandler';
 
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Start server
 const startServer = async () => {
