@@ -1,0 +1,157 @@
+# ######################
+# ### AUTH REQUESTS ###
+# ######################
+
+# ### Register a new user
+# POST http://localhost:3000/api/auth/register
+# Content-Type: application/json
+
+# {
+#   "email": "aringale17@gmail.com",
+#   "password": "Aringale17",
+#   "firstName": "Atharva",
+#   "lastName": "Ingale"
+# }
+
+# ### Login user
+# POST http://localhost:3000/api/auth/login
+# Content-Type: application/json
+
+# {
+#   "email": "admin@propertylistings.com",
+#   "password": "admin123456"
+# }
+
+# ### Get current user profile
+# GET http://localhost:3000/api/auth/profile
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Update user profile
+# PUT http://localhost:3000/api/auth/profile
+# Content-Type: application/json
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# {
+#   "phone": "9876543210"
+# }
+
+# ########################
+# ### PROPERTY REQUESTS ###
+# ########################
+
+# ### Create a property
+# POST http://localhost:3000/api/properties
+# Content-Type: application/json
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# {
+#   "title": "Beautiful Apartment",
+#   "description": "A lovely 2-bedroom apartment in downtown",
+#   "price": 2500,
+#   "propertyType": "apartment",
+#   "bedrooms": 2,
+#   "bathrooms": 2,
+#   "area": 1200,
+#   "location": {
+#     "address": "123 Main St",
+#     "city": "New York",
+#     "state": "NY",
+#     "zipCode": "10001"
+#   },
+#   "amenities": ["parking", "gym", "pool"],
+#   "isAvailable": true
+# }
+
+# ### Search properties with filters
+# GET http://localhost:3000/api/properties?city=New%20York&minPrice=1000&maxPrice=3000&bedrooms=2
+
+# ### Text search (e.g., search = downtown)
+# GET http://localhost:3000/api/properties?search=downtown
+
+# ### Get property by ID
+# GET http://localhost:3000/api/properties/PROPERTY_ID_HERE
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Update property by ID (owner only)
+# PUT http://localhost:3000/api/properties/PROPERTY_ID_HERE
+# Content-Type: application/json
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# {
+#   "area": 1300
+# }
+
+# ### Delete property by ID (owner only)
+# DELETE http://localhost:3000/api/properties/PROPERTY_ID_HERE
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Get my properties
+# GET http://localhost:3000/api/properties/user/my-properties?page=1&limit=10&sortBy=createdAt&sortOrder=desc
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# #####################
+# ### FAVORITES ###
+# #####################
+
+# ### Add a property to favorites
+# POST http://localhost:3000/api/favorites/PROPERTY_ID_HERE
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Get all favorites
+# GET http://localhost:3000/api/favorites?page=1&limit=10&sortBy=createdAt&sortOrder=desc
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Check if property is in favorites
+# GET http://localhost:3000/api/favorites/check/PROPERTY_ID_HERE
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Remove property from favorites
+# DELETE http://localhost:3000/api/favorites/PROPERTY_ID_HERE
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ##############################
+# ### RECOMMENDATIONS ###
+# ##############################
+
+# ### Recommend a property to another user
+# POST http://localhost:3000/api/recommendations
+# Content-Type: application/json
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# {
+#   "toUserEmail": "admin@propertylistings.com",
+#   "propertyId": "PROPERTY_ID_HERE",
+#   "message": "I think you might like this property!"
+# }
+
+# ### Get received recommendations
+# GET http://localhost:3000/api/recommendations/received?page=1&limit=5&sortBy=createdAt&sortOrder=desc
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Get sent recommendations
+# GET http://localhost:3000/api/recommendations/sent?page=1&limit=5&sortBy=createdAt&sortOrder=desc
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Mark a recommendation as read
+# PUT http://localhost:3000/api/recommendations/RECOMMENDATION_ID/read
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Delete a recommendation (sender only)
+# DELETE http://localhost:3000/api/recommendations/RECOMMENDATION_ID
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Get recommendation stats
+# GET http://localhost:3000/api/recommendations/stats
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ####################
+# ### USERS ###
+# ####################
+
+# ### Search users by partial email
+# GET http://localhost:3000/api/users/search?email=admin
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+# ### Get user by exact email
+# GET http://localhost:3000/api/users/by-email/admin@propertylistings.com
+# Authorization: Bearer YOUR_JWT_TOKEN_HERE

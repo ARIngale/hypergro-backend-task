@@ -2,11 +2,12 @@
   "name": "property-listing-backend",
   "version": "1.0.0",
   "description": "Property Listing System Backend with Express.js, MongoDB, and Redis",
-  "main": "dist/server.ts",
+  "main": "dist/server.js",
+  "type": "commonjs",
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.ts",
+    "start": "node dist/server.js",
     "import-csv": "ts-node src/scripts/importCSV.ts"
   },
   "dependencies": {
