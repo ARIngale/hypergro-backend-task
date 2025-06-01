@@ -13,6 +13,7 @@ import { logger } from './utils/logger';
 import { errorHandler } from './middleware/errorHandler';
 
 // Routes
+import authRoutes from './routes/auth';
 import adminRoutes from './routes/admin';
 
 
@@ -62,7 +63,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-
+app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Start server
