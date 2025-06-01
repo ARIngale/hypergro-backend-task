@@ -1,25 +1,22 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-
+import dotenv from 'dotenv';
 
 import { connectDB, disconnectDB } from './config/database';
 import { connectRedis, disconnectRedis } from './config/redis';
-
-import { logger } from './utils/logger';
 import { errorHandler } from './middleware/errorHandler';
+import { logger } from './utils/logger';
 
 // Routes
 import authRoutes from './routes/auth';
-import adminRoutes from './routes/admin';
-import favoriteRoutes from './routes/favorites';
 import propertyRoutes from './routes/properties';
+import favoriteRoutes from './routes/favorites';
 import recommendationRoutes from './routes/recommendations';
-
-
+import userRoutes from './routes/users';
+import adminRoutes from './routes/admin';
 
 dotenv.config();
 
@@ -65,37 +62,44 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/favorites', favoriteRoutes);
 app.use('/api/properties', propertyRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/favorites', favoriteRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
+});
 
 // Error handling middleware
 app.use(errorHandler);
 
-
 // Start server
 const startServer = async () => {
-    try {
-      // Connect to databases
-      await connectDB();
-      logger.info('MongoDB connected successfully');
-
-      await connectRedis();
-      logger.info('Redis connected successfully');
-  
-      app.listen(PORT, () => {
-        logger.info(`Server running on port ${PORT}`);
-        logger.info(`Environment: ${process.env.NODE_ENV}`);
-      });
-    } catch (error) {
-      logger.error('Failed to start server:', error);
-      process.exit(1);
-    }
+  try {
+    // Connect to databases
+    await connectDB();
+    logger.info('MongoDB connected successfully');
+    
+    await connectRedis();
+    logger.info('Redis connected successfully');
+    
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+      logger.info(`Environment: ${process.env.NODE_ENV}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
   }
+};
 
-  // Graceful shutdown
+// Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
   try {
@@ -107,18 +111,18 @@ process.on('SIGTERM', async () => {
     process.exit(1);
   }
 });
-  process.on('SIGINT', async () => {
-    logger.info('SIGINT received, shutting down gracefully');
-    try {
-      await disconnectDB();
-      await disconnectRedis();
-      process.exit(0);
-    } catch (error) {
-      logger.error('Error during shutdown:', error);
-      process.exit(1);
-    }
-  });
-  
+
+process.on('SIGINT', async () => {
+  logger.info('SIGINT received, shutting down gracefully');
+  try {
+    await disconnectDB();
+    await disconnectRedis();
+    process.exit(0);
+  } catch (error) {
+    logger.error('Error during shutdown:', error);
+    process.exit(1);
+  }
+});
 
 startServer();
 
